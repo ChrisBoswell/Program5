@@ -55,7 +55,91 @@ PrintPipe
 
 CheckStop
 	JSR GetChar
-BR CheckStop
+CheckU1
+
+           LD R2, charU
+
+           ADD R2, R2, R0; if zero, means char is U, check for A or G
+
+           BRz CheckA1
+
+           BRnp CheckStop
+
+ 
+
+CheckA1
+
+           JSR GetChar
+
+           LD R2, charA
+
+           ADD R2, R2, R0; if zero check for A or G
+
+           BRz CheckA2
+
+           BRnp CheckG1
+
+CheckG1
+
+           LD R2, charG
+
+           ADD R2, R2, R0
+
+           BRz CheckA2
+
+           BRnp CheckU1
+
+          
+
+CheckA2
+
+           JSR GetChar
+
+           LD R2, charA
+
+           ADD R2, R2, R0; if zero then done
+
+           BRz Done
+
+           BRnp CheckG2
+
+CheckG2
+
+           LD R2, charG
+
+           ADD R2, R2, R0
+
+           BRz Done
+
+           BRnp CheckU1
+
+ 
+
+ 
+
+GetChar
+
+           LDI R0, Buffer
+
+           BRz GetChar
+
+           ST  R7,GCR7
+
+           TRAP x21
+
+           AND R1, R1, #0
+
+           STI R1, Buffer
+
+           LD  R7,GCR7
+
+           RET
+
+ 
+
+Done
+
+           Trap x25
 
 GCR7		.BLKW 1
 BOS		.FILL x4000
